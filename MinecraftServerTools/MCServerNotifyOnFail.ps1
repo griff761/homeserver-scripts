@@ -98,7 +98,8 @@ if ($WebhookUrl) {
         Invoke-RestMethod -Uri $WebhookUrl -Method Post -ContentType 'application/json' -Body ($Payload | ConvertTo-Json -Depth 4)
     }
     catch {
-        Write-Output "Failed to send webhook. Continuing to restart logic."
+        Write-Output "Failed to send webhook. Error: $_"
+        Write-Output "Continuing to restart logic."
     }
 }
 else {
