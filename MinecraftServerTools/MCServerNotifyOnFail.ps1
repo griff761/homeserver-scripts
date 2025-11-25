@@ -59,8 +59,11 @@ else {
 # 2. Build the Message Safely
 # FIX: Use single quotes here so the backticks are treated as text, not escape codes
 $Fence = '```' 
-$LogMessage = "{0}text`n{1}`n{0}" -f $Fence, $LogSnippet
+# Sanitize LogSnippet to remove null bytes which can truncate the request in some PS versions
+$LogSnippet = $LogSnippet -replace "`0", ""
 
+$LogMessage = "{0}text`n{1}`n{0}" -f $Fence, $LogSnippet
+    
 $Payload = @{
     username = "Server Watchdog"
     embeds   = @(
@@ -95,7 +98,8 @@ $Payload = @{
 # 3. Send Webhook
 if ($WebhookUrl) {
     try {
-        Invoke-RestMethod -Uri $WebhookUrl -Method Post -ContentType 'application/json' -Body ($Payload | ConvertTo-Json -Depth 4)
+        # Use charset=utf-8 and increased depth to ensure valid JSON payload
+        Invoke-RestMethod -Uri $WebhookUrl -Method Post -ContentType 'application/json; charset=utf-8' -Body ($Payload | ConvertTo-Json -Depth 10)
     }
     catch {
         Write-Output "Failed to send webhook. Error: $_"
