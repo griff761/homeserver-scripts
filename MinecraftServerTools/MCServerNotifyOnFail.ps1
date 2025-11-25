@@ -68,7 +68,7 @@ $Payload = @{
     username = "Server Watchdog"
     embeds   = @(
         @{
-            title       = "$([char]0x26A0) Service Failure Detected"
+            title       = "$([char]0x26A0)$([char]0xFE0F) Service Failure Detected"
             description = "The Minecraft Service failed to start or crashed unexpectedly."
             color       = 16711680 # Red
             fields      = @(
