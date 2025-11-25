@@ -26,11 +26,28 @@ else {
     $WebhookUrl = $null
 }
 # ---------------------
-
 # 1. Grab the log
 if (Test-Path $LogPath) {
-    $LogContent = Get-Content $LogPath -Tail 15
-    $LogSnippet = $LogContent -join "`n"
+    $Item = Get-Item $LogPath
+    if ($Item.PSIsContainer) {
+        # It's a directory, try to find latest.log
+        $LatestLog = Join-Path $LogPath "latest.log"
+        if (Test-Path $LatestLog) {
+            $LogPath = $LatestLog
+        }
+        else {
+            Write-Warning "Provided LogPath is a directory. 'latest.log' not found in $LogPath."
+        }
+    }
+
+    # Check if we have a file now
+    if (-not (Get-Item $LogPath).PSIsContainer) {
+        $LogContent = Get-Content $LogPath -Tail 15
+        $LogSnippet = $LogContent -join "`n"
+    }
+    else {
+        $LogSnippet = "Unable to read logs. Path is a directory: $LogPath"
+    }
 }
 else {
     $LogSnippet = "Log file not found at $LogPath"
