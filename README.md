@@ -29,11 +29,20 @@ This script is intended to be triggered automatically when your service fails.
 
 *   `-ServiceName`: The exact name of the Windows Service (e.g., `MCServer`).
 *   `-LogPath`: The absolute path to your Minecraft server's `latest.log` (or equivalent).
+*   `-TestMode`: (Optional) Switch flag. If present, the script will send the webhook notification but **skip** the service restart. Useful for verifying your configuration.
 
 #### Example Command
 
 ```powershell
 powershell.exe -ExecutionPolicy Bypass -File "C:\Path\To\MinecraftServerTools\MCServerNotifyOnFail.ps1" -ServiceName "MyMinecraftService" -LogPath "C:\Games\Minecraft\logs\latest.log"
+```
+
+#### Testing
+
+To test the webhook notification without actually restarting your service, use the `-TestMode` flag:
+
+```powershell
+.\MCServerNotifyOnFail.ps1 -ServiceName "MyMinecraftService" -LogPath "C:\Games\Minecraft\logs" -TestMode
 ```
 
 ### Integration with Windows Services (Recovery Tab)
