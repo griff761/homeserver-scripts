@@ -3,7 +3,10 @@ param (
     [string]$ServiceName,
 
     [Parameter(Mandatory = $true)]
-    [string]$LogPath
+    [string]$LogPath,
+
+    [Parameter(Mandatory = $false)]
+    [switch]$TestMode
 )
 
 # --- CONFIGURATION ---
@@ -86,6 +89,11 @@ else {
 }
 
 # 4. Attempt to Restart
-Write-Output "Restarting Service: $ServiceName"
-Start-Sleep -Seconds 10
-Start-Service -Name $ServiceName
+if ($TestMode) {
+    Write-Output "Test Mode enabled. Skipping service restart for: $ServiceName"
+}
+else {
+    Write-Output "Restarting Service: $ServiceName"
+    Start-Sleep -Seconds 10
+    Start-Service -Name $ServiceName
+}
