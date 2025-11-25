@@ -98,8 +98,13 @@ $Payload = @{
 # 3. Send Webhook
 if ($WebhookUrl) {
     try {
-        # Use charset=utf-8 and increased depth to ensure valid JSON payload
-        Invoke-RestMethod -Uri $WebhookUrl -Method Post -ContentType 'application/json; charset=utf-8' -Body ($Payload | ConvertTo-Json -Depth 10)
+        # Convert payload to JSON
+        $JsonPayload = $Payload | ConvertTo-Json -Depth 10
+        
+        # Explicitly encode as UTF-8 bytes to ensure emojis work in PowerShell 5.1
+        $BodyBytes = [System.Text.Encoding]::UTF8.GetBytes($JsonPayload)
+
+        Invoke-RestMethod -Uri $WebhookUrl -Method Post -ContentType 'application/json; charset=utf-8' -Body $BodyBytes
     }
     catch {
         Write-Output "Failed to send webhook. Error: $_"
